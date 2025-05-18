@@ -11,10 +11,10 @@ class HTMLNode():
     def props_to_html(self):
         all_attr = ""
         if self.props == None:
-            return None
+            return ""
         else:
             for attr in self.props:
-                all_attr = all_attr + (f'{attr}="{self.props[attr]}" ')
+                all_attr = all_attr + (f' {attr}="{self.props[attr]}"')
             return all_attr
 
     def __repr__(self):

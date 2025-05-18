@@ -8,7 +8,7 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
 
         node2 = LeafNode("b", "BOOOOOOLLLLDDDD", 0, {"font-weight": "600"})
-        self.assertEqual(node2.to_html(), "<b>BOOOOOOLLLLDDDD</b>")
+        self.assertEqual(node2.to_html(), '<b font-weight="600">BOOOOOOLLLLDDDD</b>')
         print(node2)
 
         node3 = LeafNode(None, "No tag text")
