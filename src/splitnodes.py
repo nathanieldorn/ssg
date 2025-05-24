@@ -9,9 +9,11 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     for oldie in old_nodes:
 
         if oldie.text_type != TextType.TEXT:
-            new_nodes.append(TextNode(oldie, oldie.text_type))
+            new_nodes.append(oldie)
+        elif oldie.text_type == TextType.TEXT and delimiter == None:
+            new_nodes.append(oldie)
         elif oldie.text.count(delimiter) % 2 != 0:
-            raise Exception("Invalid Markdown syntax")
+            raise Exception("Invalid Markdwon format")
         else:
             split_old = oldie.text.split(delimiter)
             #catch formatted first word

@@ -1,7 +1,6 @@
-from types import CodeType
-from typing_extensions import Text
 import unittest
 
+from htmlnode import HTMLNode
 from textnode import TextNode, TextType
 from splitnodes import split_nodes_delimiter
 
@@ -18,9 +17,10 @@ class TestSplitNodes(unittest.TestCase):
 
         test_nodes_bad = [
             TextNode("This is a bad `code block string", TextType.TEXT),
-            TextNode("This one just normal text", TextType.TEXT),
+            TextNode("This one is just normal text", TextType.TEXT),
             TextNode("**BAD bold formatting on this one", TextType.TEXT),
             TextNode("Here are bad italics_", TextType.TEXT)
+
         ]
 
         expected_code_results = [
@@ -62,14 +62,22 @@ class TestSplitNodes(unittest.TestCase):
         self.assertListEqual(nodes_italic, expected_italics_results)
 
         #test bad code sample
+        self.assertRaises(Exception, lambda: split_nodes_delimiter([test_nodes_bad[0]], "`", TextType.CODE))
 
         #test normal sample (no formatting)
+        bad_nodes_text = split_nodes_delimiter([test_nodes_bad[1]], None, TextType.TEXT)
+        self.assertEqual(bad_nodes_text[0], TextNode("This one is just normal text", TextType.TEXT, None))
 
         #test bad bold sample
+        self.assertRaises(Exception, lambda: split_nodes_delimiter([test_nodes_bad[2]], "`", TextType.CODE))
 
         #test bad italic sample
+        self.assertRaises(Exception, lambda: split_nodes_delimiter([test_nodes_bad[3]], "`", TextType.CODE))
 
-        #test non-text nodes
+        #test non-text nodes pass through with correct and incorrect parameters
+        non_text_node = [TextNode("This is some code", TextType.CODE)]
+        self.assertEqual(split_nodes_delimiter(non_text_node, "`", TextType.CODE), non_text_node)
+        self.assertEqual(split_nodes_delimiter(non_text_node, None, TextType.LINK), non_text_node)
 
 if __name__ == "__main__":
     unittest.main()
