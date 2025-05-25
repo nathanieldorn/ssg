@@ -34,22 +34,3 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                         new_nodes.append(TextNode(split_old[i], text_type))
 
     return new_nodes
-
-
-
-
-    '''first pass code with link & image
-    match text_type:
-        case TextType.LINK:
-            link_list1 = oldie.split("(")
-            link_list2 = link_list1.split(")")
-            split_list.extend(link_list1[0])
-            split_list.extend(link_list2)
-        case TextType.IMAGES:
-            img_list1 = oldie.split("(")
-            img_list2 = img_list1.split(")")
-            split_list.extend(img_list1[0])
-            split_list.extend(img_list2)
-        case _:
-            raise Exception("Invalid text type")
-    '''
