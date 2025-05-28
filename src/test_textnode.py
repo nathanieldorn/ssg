@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import *
+from textnode import TextType, TextNode, text_node_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
@@ -45,6 +45,9 @@ class TestTextNode(unittest.TestCase):
         node4 = TextNode("A link to nowhere", TextType.LINK, "https://www.boot.dev")
         html_node4 = text_node_to_html_node(node4)
         self.assertEqual(html_node4.to_html(), '<a href="https://www.boot.dev">A link to nowhere</a>')
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

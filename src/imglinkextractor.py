@@ -7,8 +7,8 @@ def extract_markdown_images(text):
     elif len(re.findall(r"\]\(\)", text)) > 0:
         raise Exception("No url for image found")
     else:
-        return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
-
+        matches = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+        return matches
 
 def extract_markdown_links(text):
     # grab anchor text between [] and url between () but not after ! from string
@@ -16,4 +16,6 @@ def extract_markdown_links(text):
         raise Exception("No anchor text found for link")
     elif len(re.findall(r"\]\(\)", text)) > 0:
         raise Exception("No url for link found")
-    return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    else:
+        matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+        return matches
