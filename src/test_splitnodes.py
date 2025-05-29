@@ -2,7 +2,7 @@ import unittest
 
 from htmlnode import HTMLNode
 from textnode import TextNode, TextType
-from splitnodes import split_nodes_delimiter, split_nodes_image, split_nodes_links, text_to_textnodes
+from splitnodes import split_nodes_delimiter, split_nodes_image, split_nodes_links, text_to_textnodes, markdown_to_blocks
 
 class TestSplitNodes(unittest.TestCase):
 
@@ -244,6 +244,66 @@ class TestSplitNodes(unittest.TestCase):
                     TextNode("bold", TextType.BOLD)
                 ]
             )
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+        """
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+        md2 = """
+This is **bolded** paragraph
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+- This is a list
+- with items
+        """
+        blocks2 = markdown_to_blocks(md2)
+        self.assertEqual(
+            blocks2,
+            [
+                "This is **bolded** paragraph\nThis is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line\n- This is a list\n- with items"
+            ]
+        )
+
+        md3 = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+
+This is the same paragraph on a new line
+
+- This is a list
+
+- with items
+    """
+        blocks3 = markdown_to_blocks(md3)
+        self.assertEqual(
+            blocks3,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here",
+                "This is the same paragraph on a new line",
+                "- This is a list",
+                "- with items",
+            ]
+        )
+
+
 
 if __name__ == "__main__":
     unittest.main()
