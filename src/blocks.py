@@ -1,5 +1,8 @@
 from enum import Enum
 
+from splitnodes import markdown_to_blocks, text_to_textnodes
+from textnode import text_node_to_html_node
+
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -82,16 +85,6 @@ def block_to_block_type(block):
             return BlockType.UNORDERED_LIST
 
 
-
-        '''if "\n" in block:
-            i = block.index("\n")
-            if block[i+1] == "- ":
-                return BlockType.UNORDERED_LIST
-            else:
-                return BlockType.PARAGRAPH
-        else:
-            return BlockType.UNORDERED_LIST'''
-
     #check for ordered lists
     elif block[0:3] == "1. ":
 
@@ -124,3 +117,23 @@ def block_to_block_type(block):
 
     else:
         return BlockType.PARAGRAPH
+
+
+def markdown_to_html_node(markdown):
+    #convert md doc into a single parent htmlnode, may contain children htmlnodes
+    #for parent, (tag, children, props=None)
+
+    md_blocks = markdown_to_blocks(markdown)
+
+    for block in md_blocks:
+
+        #based on type, create a new htmlnode with the proper data
+        #for html, (tag=None, value=None, children=None, props=None)
+        match block_to_block_type(block):
+            case BlockType.HEADING:
+                #text to textnode
+                text_node = text_to_textnodes(block)
+                #textnode to htmlnode
+                html_node = text_node_to_html_node(text_node)
+
+                return
