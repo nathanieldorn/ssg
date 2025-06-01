@@ -1,7 +1,10 @@
 from enum import Enum
 
-from splitnodes import markdown_to_blocks, text_to_textnodes
-from textnode import text_node_to_html_node
+from htmlnode import HTMLNode
+from leafnode import LeafNode
+from parentnode import ParentNode
+from splitnodes import text_to_textnodes
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class BlockType(Enum):
@@ -13,127 +16,118 @@ class BlockType(Enum):
     ORDERED_LIST = "ordered_list"
 
 
+def markdown_to_blocks(markdown):
+    initial_block_list = markdown.split("\n\n")
+    final_block_list = []
+    for block in initial_block_list:
+        cleaned = block.strip()
+        final_block_list.append(cleaned)
+    return final_block_list
+
+
 def block_to_block_type(block):
 
-    #check for heading 1-6 blocks
-    if "# " in block[0:7]:
+    block_lines = block.split("\n")
+
+    if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING
-
-    #check for code blocks
-    elif block[0:3] == "```" and block[-3:] == "```":
+    if len(block_lines) > 1 and block_lines[0].startswith("```") and block_lines[-1].startswith("```"):
         return BlockType.CODE
-
-    #check for quote blocks
-    elif block[0] == ">":
-
-        if "\n" in block:
-            line_indices = []
-            num_lines = block.count("\n")
-            start = 0
-            match_tally = 0
-
-            #get indices of each new line
-            for x in range(0, num_lines):
-                start = block.find("\n", start)
-                line_indices.append(start)
-                start += 2
-
-            #verify incremental list start
-            for i in range(0, len(line_indices)):
-                if block[line_indices[i]+1] == ">":
-                    match_tally += 1
-                else:
-                    return BlockType.PARAGRAPH
-
-            if match_tally == num_lines:
-                return BlockType.QUOTE
-            else:
+    if block.startswith(">"):
+        for line in block_lines:
+            if not line.startswith(">"):
                 return BlockType.PARAGRAPH
-
-        else:
-            return BlockType.QUOTE
-
-
-    #check for unordered lists
-    elif block[0:2] == "- ":
-
-        if "\n" in block:
-            line_indices = []
-            num_lines = block.count("\n")
-            start = 0
-            match_tally = 0
-
-            #get indices of each new line
-            for x in range(0, num_lines):
-                start = block.find("\n", start)
-                line_indices.append(start)
-                start += 2
-
-            #verify incremental list start
-            for i in range(0, len(line_indices)):
-                if block[line_indices[i]+1:line_indices[i]+3] == "- ":
-                    match_tally += 1
-                else:
-                    return BlockType.PARAGRAPH
-
-            if match_tally == num_lines:
-                return BlockType.UNORDERED_LIST
-            else:
+        return BlockType.QUOTE
+    if block.startswith("- "):
+        for line in block_lines:
+            if not line.startswith("- "):
                 return BlockType.PARAGRAPH
-
-        else:
-            return BlockType.UNORDERED_LIST
-
-
-    #check for ordered lists
-    elif block[0:3] == "1. ":
-
-        if "\n" in block:
-            line_indices = []
-            num_lines = block.count("\n")
-            start = 0
-            match_tally = 0
-
-            #get indices of each new line
-            for x in range(0, num_lines):
-                start = block.find("\n", start)
-                line_indices.append(start)
-                start += 2
-
-            #verify incremental list start
-            for i in range(0, len(line_indices)):
-                if block[line_indices[i]+1:line_indices[i]+4] == f"{match_tally+2}. ":
-                    match_tally += 1
-                else:
-                    return BlockType.PARAGRAPH
-
-            if match_tally == num_lines:
-                return BlockType.ORDERED_LIST
-            else:
+        return BlockType.UNORDERED_LIST
+    if block.startswith("1. "):
+        i = 1
+        for line in block_lines:
+            if not line.startswith(f"{i}. "):
                 return BlockType.PARAGRAPH
+            i += 1
+        return BlockType.ORDERED_LIST
+    return BlockType.PARAGRAPH
 
-        else:
-            return BlockType.ORDERED_LIST
 
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    child_nodes = []
+    for node in text_nodes:
+        html_node = text_node_to_html_node(node)
+        child_nodes.append(html_node)
+    print("\nCHILD NODES TEST\n")
+    print(child_nodes)
+    return child_nodes
+
+
+def block_to_paragraph(block):
+    #block_lines = block.split("\n")
+    #paragraph = " ".join(block_lines)
+    paragraph_children = text_to_children(block)
+    return ParentNode("p", paragraph_children)
+
+
+def block_to_heading(block):
+    header_count = block[0:7].count("#")
+    if 0 < header_count < 7:
+        header_html = ParentNode(f"h{header_count}", text_to_children(block))
+        return header_html
     else:
-        return BlockType.PARAGRAPH
+        raise Exception("Invalid Markdown heading syntax")
+
+
+def block_to_code(block):
+    code_text_node = TextNode(block[3:-3], TextType.CODE)
+    code_html = text_node_to_html_node(code_text_node)
+    return code_html
+
+
+def block_to_quote(block):
+    quote_html = ParentNode("blockquote", text_to_children(block))
+    return quote_html
+
+
+def block_to_list(block, tag):
+    pass
+    list_html = ParentNode(tag, text_to_children(block))
+    #for child in list_html.children:
+      #  child.tag = "li"
+    return list_html
 
 
 def markdown_to_html_node(markdown):
-    #convert md doc into a single parent htmlnode, may contain children htmlnodes
-    #for parent, (tag, children, props=None)
-
     md_blocks = markdown_to_blocks(markdown)
+    child_nodes = []
 
     for block in md_blocks:
-
-        #based on type, create a new htmlnode with the proper data
-        #for html, (tag=None, value=None, children=None, props=None)
-        match block_to_block_type(block):
+        block_type = block_to_block_type(block)
+        match block_type:
+            case BlockType.PARAGRAPH:
+                html_node = block_to_paragraph(block)
+                child_nodes.append(block_to_paragraph(block))
             case BlockType.HEADING:
-                #text to textnode
-                text_node = text_to_textnodes(block)
-                #textnode to htmlnode
-                html_node = text_node_to_html_node(text_node)
+                html_node = block_to_heading(block)
+                child_nodes.append(html_node)
+            case BlockType.CODE:
+                html_node = block_to_code(block)
+                child_nodes.append(html_node)
+            case BlockType.QUOTE:
+                html_node = block_to_quote(block)
+                child_nodes.append(html_node)
+            case BlockType.UNORDERED_LIST:
+                html_node = block_to_list(block, "ul")
+                child_nodes.append(html_node)
+            case BlockType.ORDERED_LIST:
+                html_node = block_to_list(block, "ol")
+                child_nodes.append(html_node)
+            case _:
+                raise Exception("We ain't found $#@&!")
 
-                return
+    md_parent_node = ParentNode("div", child_nodes)
+    print("PARENT TEST")
+    print(md_parent_node.to_html())
+    return md_parent_node

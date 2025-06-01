@@ -38,7 +38,7 @@ class TestTextNode(unittest.TestCase):
         # test node as image
         node3 = TextNode("Alt image text", TextType.IMAGES, "https://www.boot.dev")
         html_node3 =text_node_to_html_node(node3)
-        print("Test" + html_node3.props_to_html())
+        #print("Test" + html_node3.props_to_html())
         self.assertEqual(html_node3.to_html(), '<img src="https://www.boot.dev" alt="Alt image text"></img>')
 
         # test node as link

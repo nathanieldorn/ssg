@@ -28,7 +28,7 @@ class TestParentNode(unittest.TestCase):
         self.assertRaises(ValueError)
 
         # 1 with props
-        child_node6 = LeafNode("h1", "Heading with Props!", None, {"font-style": "italics", "font-weight": "800"})
+        child_node6 = LeafNode("h1", "Heading with Props!", {"font-style": "italics", "font-weight": "800"})
         parent_node6 = ParentNode("main", [child_node6])
         self.assertEqual(
             parent_node6.to_html(),
@@ -76,7 +76,7 @@ class TestParentNode(unittest.TestCase):
         )
 
         # 1 grandchild and child with props
-        grandchild_node7 = LeafNode("a", "This is a link heading", None, {"color": "grey"})
+        grandchild_node7 = LeafNode("a", "This is a link heading", {"color": "grey"})
         child_node7 = ParentNode("h1", [grandchild_node7], {"font-style": "italics", "font-weight": "800"})
         parent_node7 = ParentNode("main", [child_node7])
         self.assertEqual(

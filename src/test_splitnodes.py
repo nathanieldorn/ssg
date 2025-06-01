@@ -2,7 +2,8 @@ import unittest
 
 from htmlnode import HTMLNode
 from textnode import TextNode, TextType
-from splitnodes import split_nodes_delimiter, split_nodes_image, split_nodes_links, text_to_textnodes, markdown_to_blocks
+from splitnodes import split_nodes_delimiter, split_nodes_image, split_nodes_links, text_to_textnodes
+from blocks import markdown_to_blocks
 
 class TestSplitNodes(unittest.TestCase):
 
