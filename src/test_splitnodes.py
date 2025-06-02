@@ -81,6 +81,7 @@ class TestSplitNodes(unittest.TestCase):
 
 
     def test_split_images(self):
+
         #test with valid text and two images
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
@@ -147,6 +148,7 @@ class TestSplitNodes(unittest.TestCase):
         )
 
     def test_split_links(self):
+
         #test with valid text and two links
         node = TextNode(
             "This is text with a [hyperlink](https://i.imgur.com/zjjcJKZ.png) and a [second link](https://www.boot.dev)",
@@ -187,66 +189,67 @@ class TestSplitNodes(unittest.TestCase):
 
     def test_text_to_text_node(self):
 
-            #test valid text
-            node = text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
-            self.assertListEqual(node,
-                [
-                    TextNode("This is ", TextType.TEXT),
-                    TextNode("text", TextType.BOLD),
-                    TextNode(" with an ", TextType.TEXT),
-                    TextNode("italic", TextType.ITALIC),
-                    TextNode(" word and a ", TextType.TEXT),
-                    TextNode("code block", TextType.CODE),
-                    TextNode(" and an ", TextType.TEXT),
-                    TextNode("obi wan image", TextType.IMAGES, "https://i.imgur.com/fJRm4Vk.jpeg"),
-                    TextNode(" and a ", TextType.TEXT),
-                    TextNode("link", TextType.LINK, "https://boot.dev"),
-                ]
-            )
+        #test valid text
+        node = text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+        self.assertListEqual(node,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGES, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ]
+        )
 
-            #test text with invalid MD syntax
-            self.assertRaises(ValueError, lambda: text_to_textnodes("This is **text with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"))
+        #test text with invalid MD syntax
+        self.assertRaises(ValueError, lambda: text_to_textnodes("This is **text with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"))
 
-            #test plain text only
-            node2 = text_to_textnodes("Here we have nothing but plain old text")
-            self.assertListEqual(node2,
-                [
-                    TextNode("Here we have nothing but plain old text", TextType.TEXT)
-                ]
-            )
+        #test plain text only
+        node2 = text_to_textnodes("Here we have nothing but plain old text")
+        self.assertListEqual(node2,
+            [
+                TextNode("Here we have nothing but plain old text", TextType.TEXT)
+            ]
+        )
 
-            #test italic before bold
-            node3 = text_to_textnodes("A new _order_ of markdown to **test**, complete with an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a bit of `code` before a [link](https://www.boot.dev)")
-            self.assertListEqual(node3,
-                [
-                    TextNode("A new ", TextType.TEXT),
-                    TextNode("order", TextType.ITALIC),
-                    TextNode(" of markdown to ", TextType.TEXT),
-                    TextNode("test", TextType.BOLD),
-                    TextNode(", complete with an ", TextType.TEXT),
-                    TextNode("obi wan image", TextType.IMAGES, "https://i.imgur.com/fJRm4Vk.jpeg"),
-                    TextNode(" and a bit of ", TextType.TEXT),
-                    TextNode("code", TextType.CODE),
-                    TextNode(" before a ", TextType.TEXT),
-                    TextNode("link", TextType.LINK, "https://www.boot.dev"),
-                ]
-            )
+        #test italic before bold
+        node3 = text_to_textnodes("A new _order_ of markdown to **test**, complete with an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a bit of `code` before a [link](https://www.boot.dev)")
+        self.assertListEqual(node3,
+            [
+                TextNode("A new ", TextType.TEXT),
+                TextNode("order", TextType.ITALIC),
+                TextNode(" of markdown to ", TextType.TEXT),
+                TextNode("test", TextType.BOLD),
+                TextNode(", complete with an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGES, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a bit of ", TextType.TEXT),
+                TextNode("code", TextType.CODE),
+                TextNode(" before a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://www.boot.dev"),
+            ]
+        )
 
-            #test new norder with minimal text between
-            node4 = text_to_textnodes("Word [link](https://www.google.com)![image](https://imgur.com)`code`_italic_ and **bold**")
-            self.assertListEqual(node4,
-                [
-                    TextNode("Word ", TextType.TEXT),
-                    TextNode("link", TextType.LINK, "https://www.google.com"),
-                    TextNode("image", TextType.IMAGES, "https://imgur.com"),
-                    TextNode("code", TextType.CODE),
-                    TextNode("italic", TextType.ITALIC),
-                    TextNode(" and ", TextType.TEXT),
-                    TextNode("bold", TextType.BOLD)
-                ]
-            )
+        #test new norder with minimal text between
+        node4 = text_to_textnodes("Word [link](https://www.google.com)![image](https://imgur.com)`code`_italic_ and **bold**")
+        self.assertListEqual(node4,
+            [
+                TextNode("Word ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://www.google.com"),
+                TextNode("image", TextType.IMAGES, "https://imgur.com"),
+                TextNode("code", TextType.CODE),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD)
+            ]
+        )
 
     def test_markdown_to_blocks(self):
+
         md = """
 This is **bolded** paragraph
 
@@ -273,6 +276,7 @@ This is the same paragraph on a new line
 - This is a list
 - with items
         """
+
         blocks2 = markdown_to_blocks(md2)
         self.assertEqual(
             blocks2,
@@ -303,7 +307,6 @@ This is the same paragraph on a new line
                 "- with items",
             ]
         )
-
 
 
 if __name__ == "__main__":
