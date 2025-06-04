@@ -1,11 +1,9 @@
 from textnode import *
-from static import clear_public
+from static import clear_public, copy_static
 
 def main():
-    textnode_test = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-    print(repr(textnode_test))
-    return clear_public("../public")
-
+    clear_public(deleted_paths=[], directory="../ssg/public")
+    copy_static(copied_paths=[], directory="../ssg/static")
 
 if __name__ == "__main__":
     main()
