@@ -30,12 +30,12 @@ def generate_page(from_path, template_path, dest_path, basepath):
     source_html = source_nodes.to_html()
 
     new_title = template.replace("{{ Title }}", source_heading)
-    new_page = new_title.replace("{{ Content }}", source_html)
-    new_page = new_page.replace('href="/', f'href="{basepath}')
-    new_page = new_page.replace('src="/', f'src="{basepath}')
+    new_page_cont = new_title.replace("{{ Content }}", source_html)
+    new_page_url = new_page_cont.replace('href="/', f'href="{basepath}')
+    new_page_src = new_page_url.replace('src="/', f'src="{basepath}')
 
     with open(dest_path, "w") as file:
-        file.write(new_page)
+        file.write(new_page_src)
         print("Page generation complete. Starting html server...")
 
 
