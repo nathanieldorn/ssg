@@ -4,20 +4,7 @@ import os, shutil
 def clear_public(deleted_paths, directory):
 
     if os.path.exists(directory):
-        for item in os.listdir(directory):
-           path = os.path.join(directory, item)
-           if os.path.isfile(path):
-               deleted_paths.append(path)
-               os.remove(path)
-           if os.path.isdir(path):
-               deleted_paths.append(path)
-               clear_public(deleted_paths, path)
-        for item in deleted_paths[::-1]:
-            if os.path.isdir(item):
-                os.rmdir(item)
-        return deleted_paths
-    else:
-        return
+        shutil.rmtree(directory)
 
 
 #next copy all files and folders from static
