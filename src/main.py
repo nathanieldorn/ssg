@@ -12,7 +12,7 @@ def main():
 
     clear_public(deleted_paths=[], directory="../docs")
     copy_static(copied_paths=[], directory="../static")
-    generate_pages_recursive("../content", "../template.html", "../docs/", basepath)
+    generate_pages_recursive("../content", "../template.html", "../docs", basepath)
 
 if __name__ == "__main__":
     main()
