@@ -19,3 +19,4 @@ This program converts Markdown files into HTML to create a static webpage. The s
 - Code
 - Link
 - Image
+- Unordered / ordered lists
